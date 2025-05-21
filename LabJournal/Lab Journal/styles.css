@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 1em;
+}
+
+.week-list {
+    margin: 20px;
+}
+
+.week-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    outline: none;
+    margin-bottom: 10px; /* Add padding between buttons */
+    transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+
+.week-button:hover {
+    background-color: #45a049; /* Change color on hover */
+}
+
+.parts-container {
+    display: none;
+    margin-left: 15px;
+    padding-left: 15px;
+    list-style-type: disc; /* Bullet point list */
+}
+
+.parts-container.active {
+    display: block;
+}
+
+.parts-container li {
+    margin: 4px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+a:hover {
+    color: #4CAF50; /* Change color on hover */
+}

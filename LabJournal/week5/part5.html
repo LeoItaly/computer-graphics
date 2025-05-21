@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Part 5</title>
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="part5.js"></script>
+    <style>
+        #controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .slider-label {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gl-canvas" width="512" height="512"></canvas>
+                    <p>
+                        Subdivision level: &nbsp; &nbsp;
+                        <button id="increase_subdivision5" class="btn btn-success">Increase</button>
+                        <button id="decrease_subdivision5" class="btn btn-warning">Decrease</button>
+                        <div>
+                            <div>
+                                K_ambient &nbsp; &nbsp; &nbsp;
+                                <input id="ka5" name="ka" type="range" min="0" max="1" step="0.01" value="0.3" />
+                            </div>
+                            <div>
+                                K_diffuse &nbsp; &nbsp; &nbsp;
+                                <input id="kd5" name="kd" type="range" min="0" max="1" step="0.01" value="0.8" />
+                            </div>
+                            <div>
+                                K_specular &nbsp; &nbsp; &nbsp;
+                                <input id="ks5" name="ks" type="range" min="0" max="1" step="0.01" value="1" />
+                            </div>
+                            <div>
+                                Shininess &nbsp; &nbsp; &nbsp;
+                                <input id="alpha5" name="alpha" type="range" min="1" max="20" step="0.1" value="10" />
+                            </div>
+                            <div>
+                                Light red &nbsp; &nbsp; &nbsp;
+                                <input id="red5" name="red" type="range" min="0" max="1" step="0.01" value="1" />
+                            </div>
+                            <div>
+                                Light green &nbsp; &nbsp; &nbsp;
+                                <input id="green5" name="green" type="range" min="0" max="1" step="0.01" value="1" />
+                            </div>
+                            <div>
+                                Light blue &nbsp; &nbsp; &nbsp;
+                                <input id="blue5" name="blue" type="range" min="0" max="1" step="0.01" value="1" />
+                            </div>
+                        </div>
+                    </p>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec3 position;
+        
+        uniform mat4 modelView;
+        uniform mat4 perspectiveMatrix;
+
+        // I only normalize positions as normals can be calculated from them
+        // since it's a unit sphere
+        varying vec4 fPosition;
+
+        void main() {
+            fPosition = vec4(position, 1);
+            
+            vec4 cameraPos = modelView * vec4(position, 1);
+            gl_Position = perspectiveMatrix * cameraPos;
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision highp float;
+        
+        varying vec4 fPosition;
+
+        uniform float Ka;
+        uniform float Kd;
+        uniform float Ks;
+        uniform float shininess;
+        uniform vec3 lightEmission;
+
+        uniform mat4 modelView;
+        
+        vec4 lightDirection = vec4(0, 0, -1, 0);
+        
+        void main() {
+            vec4 cameraPos = modelView * fPosition;
+
+            // normally we interpolate position, normals and light position
+            // here, we can simplify, because it's a unit sphere and the light is distant
+            vec4 N = normalize(modelView * vec4(fPosition.xyz, 0));
+            vec4 L = normalize(modelView * -lightDirection);
+            
+            // ambient term
+            vec3 ambient = Ka * lightEmission;
+            
+            // diffuse term
+            float lambertian = max(0.0, dot(N, L));
+            vec3 diffuse = Kd * lightEmission * lambertian;
+
+            // specular term
+            vec4 V = normalize(-cameraPos);
+            vec4 R = normalize(reflect(-L, N));
+
+            vec3 specular = vec3(0);
+            if (lambertian > 0.0)
+            {
+                float cos_alpha = max(0.0, dot(V, R));
+                specular = Ks * lightEmission * pow(cos_alpha, shininess);
+            }
+
+            // final color
+            vec3 baseColor = fPosition.xyz * 0.5 + 0.5;
+            gl_FragColor = vec4(baseColor * (ambient + diffuse + specular), 1);
+        }
+    </script>
+    <script type="text/javascript" src="part5.js"></script>
+</body>
+</html>

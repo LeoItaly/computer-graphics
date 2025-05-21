@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebGL Object Display</title>
+    <!-- Include necessary scripts -->
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="../common/OBJParser.js"></script>
+    <script type="text/javascript" src="loadobject.js"></script>
+</head>
+<body>
+    <!-- Shaders for the object -->
+    <script id="obj-vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 a_Position;
+        attribute vec4 a_Normal;
+        varying vec3 v_Position;
+        varying vec3 v_Normal;
+
+        uniform mat4 M;
+        uniform mat4 V;
+        uniform mat4 P;
+
+        void main() {
+            vec4 pos = M * a_Position;
+            v_Position = pos.xyz;
+            v_Normal = (M * a_Normal).xyz;
+            gl_Position = P * V * pos;
+        }
+    </script>
+
+    <script id="obj-fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec3 v_Position;
+        varying vec3 v_Normal;
+
+        uniform vec3 eyePos;
+        uniform vec4 lightPos;
+        uniform vec3 kd;
+        uniform vec3 ks;
+        uniform float s;
+        uniform vec3 Le;
+        uniform vec3 La;
+        void main() {
+            vec3 normal = normalize(v_Normal);
+            vec3 lightDir = normalize((lightPos.w == 0.0) ? lightPos.xyz : lightPos.xyz - v_Position);
+            float diff = max(dot(normal, lightDir), 0.0);
+            vec3 reflectDir = reflect(-lightDir, normal);
+            vec3 viewDir = normalize(eyePos - v_Position);
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), s);
+            vec3 ambient = La * kd;
+            vec3 diffuse = Le * kd * diff;
+            vec3 specular = Le * ks * spec;
+            gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
+        }
+    </script>
+
+    <!-- Canvas -->
+    <canvas id="webgl-canvas" width="512" height="512">
+        Your browser doesn't support HTML5 canvas.
+    </canvas>
+</body>
+</html>

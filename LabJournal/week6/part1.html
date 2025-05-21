@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Object</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                background-color: #f0f0f0;
+            }
+            #description {
+                max-width: 600px;
+                margin: auto;
+                padding: 20px;
+                background: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            canvas {
+                margin-top: 20px;
+                border: 1px solid #ccc;
+            }
+            button {
+                margin: 10px;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="../common/webgl-utils.js" type="text/javascript"></script>
+        <script src="../common/initShaders.js" type="text/javascript"></script>
+        <script src="../common/MV.js" type="text/javascript"></script>
+        <script src="OBJParser.js" type="text/javascript"></script>
+
+        <div id="description">
+            <h2>Phong Shading and Surface Normals</h2>
+            <p>
+                In this visualization, a monkey is rendered using Phong shading, which involves calculating light reflection 
+                at each point on the surface to produce smooth shading. The surface normals are critical in this process; 
+                they define the direction in which the surface is facing at each vertex.
+            </p>
+            <p>
+                By averaging the normals of adjacent triangles, smooth shading is achieved, which makes the surface appear 
+                less faceted and more natural. This is crucial for improving the visual quality of rendered 3D models.
+            </p>
+        </div>
+        <canvas id="gl-canvas" width="512" height="512">Please use a browser supporting HTML5</canvas>
+                    <div>
+                        <div>
+                            K_ambient &nbsp; &nbsp; &nbsp;
+                            <input id="ka4" name="ka" type="range" min="0" max="1" step="0.01" value="0.2" />
+                        </div>
+                        <div>
+                            K_diffuse &nbsp; &nbsp; &nbsp;
+                            <input id="kd4" name="kd" type="range" min="0" max="1" step="0.01" value="0.8" />
+                        </div>
+                        <div>
+                            K_specular &nbsp; &nbsp; &nbsp;
+                            <input id="ks4" name="ks" type="range" min="0" max="1" step="0.01" value="1" />
+                        </div>
+                        <div>
+                            Shininess &nbsp; &nbsp; &nbsp;
+                            <input id="alpha4" name="alpha" type="range" min="1" max="20" step="0.1" value="5" />
+                        </div>
+                        <div>
+                            Light red &nbsp; &nbsp; &nbsp;
+                            <input id="red4" name="red" type="range" min="0" max="1" step="0.01" value="1" />
+                        </div>
+                        <div>
+                            Light green &nbsp; &nbsp; &nbsp;
+                            <input id="green4" name="green" type="range" min="0" max="1" step="0.01" value="0.5" />
+                        </div>
+                        <div>
+                            Light blue &nbsp; &nbsp; &nbsp;
+                            <input id="blue4" name="blue" type="range" min="0" max="1" step="0.01" value="0.2" />
+                        </div>
+        <!-- SCRIPTS -->
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec3 a_Position;
+            attribute vec3 a_Normal;
+            attribute vec4 a_Color;
+            
+            uniform mat4 modelView;
+            uniform mat4 perspectiveMatrix;
+    
+            varying vec4 fPosition;
+            varying vec4 fNormal;
+            varying vec4 fColor;
+    
+            void main() {
+                fPosition = vec4(a_Position, 1);
+                fNormal = vec4(a_Normal, 0);
+                fColor = a_Color;
+                
+                vec4 cameraPos = modelView * fPosition;
+                gl_Position = perspectiveMatrix * cameraPos;
+            }
+        </script>
+        
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision highp float;
+            
+            varying vec4 fPosition;
+            varying vec4 fNormal;
+            varying vec4 fColor;
+    
+            uniform float Ka;
+            uniform float Kd;
+            uniform float Ks;
+            uniform float shininess;
+            uniform vec3 lightEmission;
+    
+            uniform mat4 modelView;
+            
+            // light
+            vec4 lightDirection = vec4(0, 0, -1, 0);
+            
+            void main() {
+                vec4 cameraPos = modelView * fPosition;
+    
+                vec4 N = normalize(modelView * fNormal);
+                vec4 L = normalize(modelView * -lightDirection);
+                
+                // ambient term
+                vec3 ambient = Ka * lightEmission;
+                
+                // diffuse term
+                float lambertian = max(0.0, dot(N, L));
+                vec3 diffuse = Kd * lightEmission * lambertian;
+    
+                // specular term
+                vec4 V = normalize(-cameraPos);
+                vec4 R = normalize(reflect(-L, N));
+    
+                vec3 specular = vec3(0);
+                if (lambertian > 0.0) {
+                    float cos_alpha = max(0.0, dot(V, R));
+                    specular = Ks * lightEmission * pow(cos_alpha, shininess);
+                }
+    
+                // final color
+                gl_FragColor = vec4(fColor.xyz * (ambient + diffuse + specular), 1);
+            }
+        </script>
+        <script src="part1.js" type="text/javascript"></script>
+    </body>
+</html>

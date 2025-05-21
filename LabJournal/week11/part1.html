@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Part 1</title>
+</head>
+
+<body>
+    <canvas id="canvas1" width="512" height="512">Please use a browser supporting HTML5</canvas>
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="OBJParser.js"></script>
+    <script type="text/javascript" src="quaternion.js"></script>
+
+    <script id="vertex-shader-1" type="x-shader/x-vertex">
+        attribute vec3 a_Position;
+        attribute vec3 a_Normal;
+        attribute vec4 a_Color;
+        
+        uniform mat4 modelView;
+        uniform mat4 perspectiveMatrix;
+
+        varying vec4 fPosition;
+        varying vec4 fNormal;
+        varying vec4 fColor;
+
+        void main() {
+            fPosition = vec4(a_Position, 1);
+            fNormal = vec4(a_Normal, 0);
+            fColor = a_Color;
+            
+            vec4 cameraPos = modelView * fPosition;
+            gl_Position = perspectiveMatrix * cameraPos;
+        }
+    </script>
+    <script id="fragment-shader-1" type="x-shader/x-fragment">
+        precision highp float;
+        
+        varying vec4 fPosition;
+        varying vec4 fNormal;
+        varying vec4 fColor;
+
+        uniform float Ka;
+        uniform float Kd;
+        uniform float Ks;
+        uniform float shininess;
+        uniform vec3 lightEmission;
+
+        uniform mat4 modelView;
+        
+        // light
+        vec4 lightDirection = vec4(0, 0, -1, 0);
+        
+        void main() {
+            vec4 cameraPos = modelView * fPosition;
+
+            vec4 N = normalize(modelView * fNormal);
+            vec4 L = normalize(-lightDirection);
+            
+            // ambient term
+            vec3 ambient = Ka * lightEmission;
+            
+            // diffuse term
+            float lambertian = abs(dot(N, L)); // modified to light up the inside (back faces)
+            vec3 diffuse = Kd * lightEmission * lambertian;
+
+            // specular term
+            vec4 V = normalize(-cameraPos);
+            vec4 R = normalize(reflect(-L, N));
+
+            vec3 specular = vec3(0);
+            if (lambertian > 0.0) {
+                float cos_alpha = max(0.0, dot(V, R));
+                specular = Ks * lightEmission * pow(cos_alpha, shininess);
+            }
+
+            // final color
+            gl_FragColor = vec4(fColor.xyz * (ambient + diffuse + specular), 1);
+        }
+    </script>
+    <script type="text/javascript" src="part1.js"></script>
+</body>
+
+</html>

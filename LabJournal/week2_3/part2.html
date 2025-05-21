@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vColor;
+        varying vec4 fColor;
+        void main()
+        {
+            gl_PointSize = 10.0;
+            gl_Position = vPosition;
+            fColor = vColor;
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+        void main()
+        {
+            gl_FragColor = fColor;
+        }
+        </script>
+<head>
+    <title> Part 2 </title>
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="part2.js"></script>
+</head>    
+<br>
+    <canvas id ="webgl-canvas" width="512" height="512"></canvas>
+    <br/>
+    <button id="clearButton">Clear</button>
+    <label for="colorPicker">Choose Color </label>
+    <input type="color" id="colorPicker" name="colorPicker" value="#000000">
+</body>
+</html>

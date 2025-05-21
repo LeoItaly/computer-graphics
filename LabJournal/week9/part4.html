@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Part 4</title>
+</head>
+<body>
+    <canvas id="gl-canvas" width="500" height="500">
+    </canvas>
+
+    <div>
+        <button id="toggle-circulation">Toggle Circulation</button>
+    </div>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        precision mediump float;
+        attribute vec4 a_position_model;
+        attribute vec2 a_textureCoords;
+        varying vec2 v_textureCoords;
+        uniform mat4 u_mvp;
+
+        void main() {
+            v_textureCoords = a_textureCoords;
+            gl_Position = u_mvp * a_position_model;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec2 v_textureCoords;
+        uniform sampler2D u_texture;
+        uniform sampler2D u_textureRed;
+        uniform int u_useRedTexture;
+        uniform int u_isShadow;
+
+        void main() {
+            vec4 color;
+            if (u_isShadow == 1) {
+                // Output semi-transparent black for shadows
+                color = vec4(0.0, 0.0, 0.0, 0.5); // Adjust alpha as desired
+            } else {
+                if (u_useRedTexture == 1) {
+                    color = texture2D(u_textureRed, v_textureCoords);
+                } else {
+                    color = texture2D(u_texture, v_textureCoords);
+                }
+            }
+            gl_FragColor = color;
+        }
+    </script>
+
+    <script src="../common/webgl-utils.js" type="text/javascript"></script>
+    <script src="../common/initShaders2.js" type="text/javascript"></script>
+    <script src="../common/MV.js" type="text/javascript"></script>
+    <script src="../common/OBJParser.js" type="text/javascript"></script>
+    <script src="../common/initShaders.js" type="text/javascript"></script>
+
+    <script src="part4.js" type="text/javascript"></script>
+</body>
+</html>

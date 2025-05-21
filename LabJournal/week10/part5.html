@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Part 5</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #35495e;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: normal;
+        }
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        section {
+            background-color: #fff;
+            margin-bottom: 40px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        section h2 {
+            margin-top: 0;
+            color: #35495e;
+        }
+        section p {
+            line-height: 1.6;
+            color: #555;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+        }
+        .comparison-table th {
+            background-color: #f7f7f7;
+            color: #333;
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #555;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #35495e;
+            color: #fff;
+        }
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            section {
+                padding: 20px;
+            }
+            .comparison-table th, .comparison-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Comparison of Projection Shadows and Shadow Mapping</h1>
+</header>
+
+<main>
+    <section>
+        <p>
+            Shadows are essential for creating realistic graphics in 3D rendering. Two common techniques for rendering shadows are <strong>Projection Shadows</strong> and <strong>Shadow Mapping</strong>. This document compares these two techniques, highlighting their advantages and disadvantages.
+        </p>
+    </section>
+
+    <section>
+        <h2>Projection Shadows</h2>
+        <h3>Advantages</h3>
+        <ul>
+            <li>Simple to implement.</li>
+            <li>Computationally less intensive.</li>
+            <li>No need for additional buffers or textures.</li>
+            <li>Effective for simple scenes and static lights.</li>
+        </ul>
+
+        <h3>Disadvantages</h3>
+        <ul>
+            <li>Lacks self-shadowing capabilities.</li>
+            <li>Limited to planar surfaces.</li>
+            <li>Inaccurate for complex geometries.</li>
+            <li>Challenging to handle multiple light sources.</li>
+            <li>Shadows may appear unrealistic due to lack of perspective distortion.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Shadow Mapping</h2>
+        <h3>Advantages</h3>
+        <ul>
+            <li>Supports dynamic lights and moving objects.</li>
+            <li>Handles self-shadowing effectively.</li>
+            <li>Can cast shadows on any geometry.</li>
+            <li>Produces realistic shadows with perspective distortion.</li>
+            <li>Suitable for complex scenes.</li>
+        </ul>
+
+        <h3>Disadvantages</h3>
+        <ul>
+            <li>Requires additional memory for depth maps.</li>
+            <li>More computationally intensive.</li>
+            <li>Can suffer from aliasing and shadow acne.</li>
+            <li>Needs careful tuning of shadow bias and resolution.</li>
+            <li>Implementation is more complex.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Comparison Summary</h2>
+        <table class="comparison-table">
+            <tr>
+                <th>Criteria</th>
+                <th>Projection Shadows</th>
+                <th>Shadow Mapping</th>
+            </tr>
+            <tr>
+                <td>Implementation Complexity</td>
+                <td>Simple</td>
+                <td>Complex</td>
+            </tr>
+            <tr>
+                <td>Computational Overhead</td>
+                <td>Low</td>
+                <td>High</td>
+            </tr>
+            <tr>
+                <td>Self-Shadowing</td>
+                <td>Not Supported</td>
+                <td>Supported</td>
+            </tr>
+            <tr>
+                <td>Surface Compatibility</td>
+                <td>Planar Surfaces</td>
+                <td>All Geometries</td>
+            </tr>
+            <tr>
+                <td>Realism</td>
+                <td>Less Realistic</td>
+                <td>More Realistic</td>
+            </tr>
+            <tr>
+                <td>Memory Usage</td>
+                <td>Minimal</td>
+                <td>Requires Depth Textures</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <p>
+            The choice between projection shadows and shadow mapping depends on the requirements of the scene and the desired level of realism. Projection shadows are suitable for simple applications where performance is critical. In contrast, shadow mapping provides more accurate and realistic shadows, especially in complex scenes, but comes at the cost of increased computational overhead and implementation complexity.
+        </p>
+    </section>
+</main>
+
+<footer>
+    &copy; 2024 Graphics Rendering Techniques
+</footer>
+
+</body>
+</html>

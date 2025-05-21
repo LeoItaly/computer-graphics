@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Part 2</title>
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="part2.js"></script>
+</head>
+<body>
+    <canvas id="gl-canvas" width="512" height="512">
+    </canvas>
+    <br/>
+    <button id="IncreaseSubdivision">Increase Subdivision</button>
+    <button id="DecreaseSubdivision">Decrease Subdivision</button>
+    <p id="subdivisionLevelDisplay">Current Subdivision Level: 3</p>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        varying vec4 fColor;
+
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+
+        void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+            fColor = 0.5 * vPosition + 0.5;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec4 fColor;
+
+        void main() {
+            gl_FragColor = fColor;
+        }
+    </script>
+</body>
+</html>

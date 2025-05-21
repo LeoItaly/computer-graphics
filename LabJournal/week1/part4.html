@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <!-- uniform so the shader expects its value to be provided by the application.  -->
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec3 vPosition;
+        attribute vec3 vColor;
+        uniform float theta; 
+        varying vec4 fColor;
+        void main()
+        {
+            gl_Position.x = -sin(theta) * vPosition.x + cos(theta) * vPosition.y;
+            gl_Position.y =  sin(theta) * vPosition.y + cos(theta) * vPosition.x;
+            gl_Position.z = 0.0;
+            gl_Position.w = 1.0;
+            fColor = vec4(vColor, 1.0);
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+
+        void main() {
+            gl_FragColor = fColor;
+        }
+        </script>
+<head>
+    <title> Part 4 </title>
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="part4.js"></script>
+</head>    
+<body>
+    <canvas id ="webgl-canvas" width="512" height="512">
+    </canvas>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Part 4</title>
+    <script type="text/javascript" src  ="../common/MV.js"></script>
+    <script type="text/javascript" src="../common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../common/initShaders.js"></script>
+    <script type="text/javascript" src="../common/MV.js"></script>
+    <script type="text/javascript" src="part4.js"></script>
+</head>
+<body>
+    <script id ="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 a_Position;
+        attribute vec4 a_Color;
+        varying vec4 f_Color;
+        void main() {
+            gl_Position = a_Position;
+            f_Color = a_Color;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 f_Color;
+        void main() {
+            gl_FragColor = f_Color;
+        }
+    </script>
+    <br>
+        <canvas id="webgl-canvas" width="512" height="512"></canvas>
+    <br />
+    
+    <button id="PointMode">Point</button>
+    <button id="TriMode">Triangle</button>
+    <button id="CircleMode">Circles</button>
+    <button id="ClearButton">Clear</button>
+    <select id="BGColorMenu" size="1">
+        <option value="0">Cornflower</option>
+        <option value="1">White</option>
+        <option value="2">Gray</option>
+    </select>
+    <select id="DrawColorMenu" size="1">
+        <option value="0">Black</option>
+        <option value="1">Red</option>
+        <option value="2">Green</option>
+        <option value="3">Blue</option>
+    </select>
+</body>
+</html>

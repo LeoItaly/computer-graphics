@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Sphere with Normal Mapping</title>
+    </head>
+    <body>
+        <button id="go-button">Go</button>
+        <button id="stop-button">Stop</button>
+        <canvas id="gl-canvas" width="500" height="500">
+        </canvas>
+
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            precision mediump float;
+            attribute vec4 a_position_model;
+            varying vec3 v_normal;
+            varying vec3 v_position_world;
+            varying vec2 v_texCoord2D;
+            uniform mat4 u_mvp;
+            uniform mat4 u_model;
+
+            const float PI = 3.1415926535897932384626433832795;
+
+            void main() {
+                vec3 pos = normalize(a_position_model.xyz);
+                float theta = atan(pos.z, pos.x);
+                float phi = asin(pos.y);
+
+                float u = (theta + PI) / (2.0 * PI);
+                float v = (phi + PI / 2.0) / PI;
+
+                v_texCoord2D = vec2(u, v);
+                v_normal = normalize(mat3(u_model) * a_position_model.xyz);
+                v_position_world = (u_model * a_position_model).xyz;
+                gl_Position = u_mvp * a_position_model;
+            }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec3 v_normal;
+            varying vec3 v_position_world;
+            varying vec2 v_texCoord2D;
+            uniform samplerCube u_texture;
+            uniform sampler2D u_normalMap;
+            uniform vec3 u_eye_world;
+            uniform bool reflective;
+
+            vec3 rotate_to_normal(vec3 n, vec3 v) {
+                float sgn_nz = sign(n.z + 1.0e-16);
+                float a = -1.0 / (1.0 + abs(n.z));
+                float b = n.x * n.y * a;
+                return vec3(1.0 + n.x * n.x * a, b, -sgn_nz * n.x) * v.x
+                     + vec3(sgn_nz * b, sgn_nz * (1.0 + n.y * n.y * a), -n.y) * v.y
+                     + n * v.z;
+            }
+
+            void main() {
+                vec4 texColor;
+                if (reflective) {
+                    // Sample normal from normal map and transform to [-1, 1]
+                    vec3 normalMap = texture2D(u_normalMap, v_texCoord2D).rgb;
+                    normalMap = normalMap * 2.0 - 1.0;
+
+                    // Transform normal from tangent space to world space
+                    vec3 normal = rotate_to_normal(normalize(v_normal), normalMap);
+
+                    // Calculate reflection vector
+                    vec3 viewDir = normalize(u_eye_world - v_position_world);
+                    vec3 reflectedDir = reflect(-viewDir, normal);
+
+                    // Sample from cube map using reflection vector
+                    texColor = textureCube(u_texture, reflectedDir);
+
+                    gl_FragColor = texColor;
+                } else {
+                    // For the background
+                    vec3 lookupDir = normalize(v_normal);
+                    texColor = textureCube(u_texture, lookupDir);
+                    gl_FragColor = texColor;
+                }
+            }
+        </script>
+
+        <script src="../common/webgl-utils.js" type="text/javascript"></script>
+        <script src="../common/initShaders.js" type="text/javascript"></script>
+        <script src="../common/MV.js" type="text/javascript"></script>
+        <script src="part4.js" type="text/javascript"></script>
+    </body>
+</html>

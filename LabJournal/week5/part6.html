@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Part 6 </title>
+</head>
+<body>
+    <h1>Part 6 Answers</h1>
+
+    <h2>a) What is the difference between Phong shading and Phong lighting (the Phong reflection model)?</h2>
+    <p>
+        <strong>Phong lighting</strong>, or the Phong reflection model, is a local illumination model that describes how light reflects off a surface at a point. It accounts for ambient, diffuse, and specular reflections based on the material properties and the light sources.
+    </p>
+    <p>
+        <strong>Phong shading</strong> is a shading technique that interpolates normal vectors across the surfaces of polygons. It applies the Phong lighting model per pixel (fragment), resulting in smooth shading and realistic highlights.
+    </p>
+    <p>
+        In summary, Phong lighting is the model used to calculate the color at a point due to lighting and material properties, while Phong shading is the method of applying this model per pixel by interpolating normals across surfaces.
+    </p>
+
+    <h2>b) What is the difference between flat shading, Gouraud shading, and Phong shading? List pros and cons of each. Is Gouraud or Phong shading the best method for simulating highlights? Explain.</h2>
+    <h3>Flat Shading</h3>
+    <p>
+        <strong>Flat shading</strong> computes lighting once per polygon using a single normal vector and applies a uniform color across the entire polygon.
+    </p>
+    <p>
+        <strong>Pros:</strong> Fast computation, suitable for flat surfaces.<br>
+        <strong>Cons:</strong> Produces a faceted appearance on curved surfaces, lacks smooth transitions, does not simulate highlights well.
+    </p>
+
+    <h3>Gouraud Shading</h3>
+    <p>
+        <strong>Gouraud shading</strong> calculates lighting at each vertex and interpolates the resulting colors across the surface of the polygon.
+    </p>
+    <p>
+        <strong>Pros:</strong> Smoother shading than flat shading, less computationally intensive than Phong shading.<br>
+        <strong>Cons:</strong> Can miss specular highlights if they do not occur at vertices, may produce Mach band artifacts.
+    </p>
+
+    <h3>Phong Shading</h3>
+    <p>
+        <strong>Phong shading</strong> interpolates vertex normals across the polygon's surface and computes lighting at each pixel using the interpolated normals.
+    </p>
+    <p>
+        <strong>Pros:</strong> Produces smooth shading and accurate specular highlights, reduces visual artifacts.<br>
+        <strong>Cons:</strong> More computationally intensive than Gouraud shading.
+    </p>
+
+    <p>
+        <strong>Best method for simulating highlights:</strong> Phong shading is better for simulating highlights because it performs per-pixel lighting calculations using interpolated normals. This allows specular highlights to be accurately rendered even if they occur away from vertices. Gouraud shading may miss highlights that do not coincide with vertices.
+    </p>
+
+    <h2>c) What is the difference between a directional light and a point light?</h2>
+    <p>
+        <strong>Directional Light:</strong> A light source that is considered to be at an infinite distance, emitting parallel light rays in a single direction. The light direction is constant across the scene, and there is no attenuation with distance.
+    </p>
+    <p>
+        <strong>Point Light:</strong> A light source that emits light equally in all directions from a single point in space. The intensity of the light diminishes with the square of the distance from the source to the point being lit.
+    </p>
+
+    <h2>d) Does the eye position influence the shading of an object in any way?</h2>
+    <p>
+        Yes, the eye (viewer) position influences the shading of an object, particularly in the calculation of specular reflections in the Phong reflection model. The angle between the viewer direction and the reflection direction affects the intensity and position of specular highlights on the object's surface.
+    </p>
+
+    <h2>e) What is the effect of setting the specular term to (0, 0, 0)?</h2>
+    <p>
+        Setting the specular term to (0, 0, 0) removes the specular reflection component from the lighting calculation. The material will not exhibit any specular highlights, making the surface appear dull or matte without any shininess.
+    </p>
+
+    <h2>f) What is the effect of increasing the shininess exponent (𝛼)?</h2>
+    <p>
+        Increasing the shininess exponent (𝛼) in the Phong reflection model makes the specular highlights smaller and sharper. This simulates a smoother and shinier surface by concentrating the specular reflection around the mirror reflection direction.
+    </p>
+
+    <h2>g) In what coordinate space did you compute the lighting?</h2>
+    <p>
+        The lighting was computed in eye (camera) coordinate space after transforming the normals and positions by the model-view transformation.
+    </p>
+</body>
+</html>

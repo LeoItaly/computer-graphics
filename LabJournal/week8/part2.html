@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        precision mediump float;
+        attribute vec4 a_position_model;
+        varying vec3 v_texCoord;
+        varying vec3 v_position_world;
+        uniform mat4 u_mvp;
+        uniform mat4 u_Mtex;
+        uniform mat4 u_model;
+
+        void main() {
+            v_position_world = (u_model * a_position_model).xyz;
+            v_texCoord = (u_Mtex * a_position_model).xyz;
+            gl_Position = u_mvp * a_position_model;
+        }
+
+    </script>
+    
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec3 v_texCoord;
+        varying vec3 v_position_world;
+        uniform samplerCube u_texture;
+        uniform vec3 u_eye_world;
+        uniform vec3 u_light_world;
+        uniform bool reflective;
+
+        void main() {
+            vec3 normal = normalize(v_texCoord);
+            vec3 lookupDir = normal;
+
+            vec4 ka = vec4(0.5, 0.5, 0.5, 1.0);
+            vec4 kd = vec4(1.0, 1.0, 1.0, 1.0);
+
+            vec4 ambient = ka;
+            vec4 diffuse = kd;
+
+            if (reflective) {
+                vec3 v = normalize(u_eye_world - v_position_world);
+                lookupDir = reflect(-v, normal);
+
+                vec3 l = normalize(u_light_world - v_position_world);
+                float cosAngle = max(dot(normal, l), 0.0);
+                diffuse *= cosAngle;
+            }
+
+            gl_FragColor = (ambient + diffuse) * textureCube(u_texture, lookupDir);
+        }
+
+
+    </script>
+    
+    <body>
+        <button id="go-button">Go</button>
+        <button id="stop-button">Stop</button>
+        <canvas id="gl-canvas" width="500" height="500">
+        </canvas>
+        <script src="../common/webgl-utils.js" type="text/javascript"></script>
+        <script src="../common/initShaders2.js" type="text/javascript"></script>
+        <script src="../common/initShaders.js" type="text/javascript"></script>
+        <script src="../common/MV.js" type="text/javascript"></script>
+        <script src="../common/OBJParser.js" type="text/javascript"></script>
+        <script src="part2.js" type="text/javascript"></script>
+    </body>
+</html>
